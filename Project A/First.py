@@ -1,12 +1,19 @@
 import math
 
-class piCalc:
-    def __init__(self,dec):
-        self.dec = dec
+#LEARNING OOP
 
+class piCalc:
+    def __init__(self):
+        self.dec = 0
+    
+    def getdec(self):
+        self.dec = int(input("Enter the number of decimal places: "))
 
     def calculate(self):
-        print("The value of dec is: ", self.dec)
+        print(f"{math.pi:.{self.dec}f}")
 
-g1 = piCalc(2)
-g1.calculate()
+
+if __name__ == "__main__":
+    pi = piCalc()
+    pi.getdec()
+    pi.calculate()
