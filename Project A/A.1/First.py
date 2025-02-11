@@ -12,7 +12,6 @@ class piCalc:
     def calculate(self):
         print(f"{math.pi:.{self.dec}f}")
 
-
 if __name__ == "__main__":
     pi = piCalc()
     pi.getdec()
