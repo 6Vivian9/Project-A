@@ -18,9 +18,13 @@ class Nth_Digit:
             if last_decimal == str(self.dec):
                 print(f"Match found at {i+1}th decimal place")
                 break
-            
+    
+    def main(self):
+        self.inputdigit()
+        self.calculatepi()
+        self.findmatchdigit()
+
+
 if __name__ == "__main__":
     obj = Nth_Digit()
-    obj.inputdigit()
-    obj.calculatepi()
-    obj.findmatchdigit()
+    obj.main()
