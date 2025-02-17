@@ -13,16 +13,17 @@ class slot:
         slot.ui()
 
     def ui(self):
-        self.choice = int(input(f"What would you like to do?\n[1] Spin\n[2] Deposit\n[3] Cash out\nCurrent Balance: ${self.balance}\n:"))
-        if self.choice == 1:
-            slot.spin()
-        elif self.choice == 2:
-            slot.deposit()
-        elif self.choice == 3:
-            slot.cashout()
-        print("Invalid Option")
-        slot.ui()
-        return
+        while True:
+            choice = int(input(f"What would you like to do?\n[1] Spin\n[2] Deposit\n[3] Cash out\nCurrent Balance: ${self.balance}\n: "))
+            if choice == 1:
+                self.spin()
+            elif choice == 2:
+                self.deposit()
+            elif choice == 3:
+                self.cashout()
+                break
+            else:
+                print("Invalid Option")
 
     def cashout(self):
         print("Thanks for playing!")
