@@ -16,6 +16,7 @@ class Weather:
         if response.status_code == 200:
             return response.json()
         else:
+            print(f"Failed to retreive Weather Data for {city}")
             return None
 
     def add_favorite(self, city):
@@ -29,7 +30,6 @@ class Weather:
         else:
             for i in range (0, len(self.favorites)):
                 print(f"{self.favorites[i]}")
-            return
 
     def save_favorite(self, filename):
         with open(filename, 'w') as file:
@@ -59,7 +59,8 @@ class Weather:
                 current_weather = self.get_weather(city)
                 print(f"Current Temperature: {current_weather['current']['temp_c']}"
                       f"\nCurrent Condition: {current_weather['current']['condition']['text']}"
-                      f"\n")
+                      f"\nWind KPH: {current_weather['current']['condition']['wind_kph']}")
+                
             elif choice == "2":
                 city = input("Enter a City: ")
                 weather.add_favorite(city)
@@ -74,7 +75,7 @@ class Weather:
                 weather.load_favorite(filename)
             elif choice == "6":
                 print("Thank you!")
-                pass
+            
                 break
             else:
                 "Invalid Choice:"
@@ -82,13 +83,6 @@ class Weather:
 
     def main(self):
         weather.ui()
-        # city = input("Enter A City")
-        # weather_data = self.get_weather(city)
-        # if weather_data:
-        #     print(f"{weather_data['current']['temp_c']}")
-        
-
-
 
 if __name__ == "__main__":
     api_key = "5508cba1c0d343dfa2373257251802"
