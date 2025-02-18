@@ -1,19 +1,3 @@
-"""
-/ Add a new expense.
-View all expenses.
-View expenses by category.
-View total expenses.
-Save expenses to a file.
-Load expenses from a file.
-
-Add Expense: Allow users to add a new expense with a description, amount, and category.
-View All Expenses: Display all recorded expenses.
-View Expenses by Category: Filter and display expenses by a specific category.
-View Total Expenses: Calculate and display the total amount of all expenses.
-Save Expenses to File: Save the list of expenses to a JSON file.
-Load Expenses from File: Load expenses from a JSON file.
-"""
-
 import json
 
 class Tracker:
@@ -22,20 +6,6 @@ class Tracker:
         self.description = str
         self.amount = float
         self.category = str
-
-        self.description = "Cooking Oil"
-        self.amount = 1.20
-        self.category = "Cooking"
-        expen = (self.description, self.amount, self.category)
-        self.expenses.append(expen)
-        self.description = "Bracelet"
-        self.amount = 100.15
-        self.category = "Accessory"
-        expen = (self.description, self.amount, self.category)
-        self.expenses.append(expen)
-
-    def test(self):
-        pass
 
     def add_expense(self):
         self.description = input("Enter Description: ")
@@ -51,6 +21,41 @@ class Tracker:
         else:
             for i in range(0, len(self.expenses)):
                 print(f"Description: {self.expenses[i][0]} Amount: {self.expenses[i][1]} Category: {self.expenses[i][2]}")
+
+    def view_by_category(self):
+        category = input("Enter Category: ")
+        if not self.expenses:
+            print("No Expenses Recorded yet")
+            return
+        else:
+            for i in range (0, len(self.expenses)):
+                if self.expenses[i][2] == category:
+                    print(f"Description: {self.expenses[i][0]} Amount: {self.expenses[i][1]} Category: {self.expenses[i][2]}")
+    
+    def view_total(self):
+        sum = float(0)
+        if not self.expenses:
+            print("No Expense Yet Recorded")
+            return
+        else:
+            for i in range (0, len(self.expenses)):
+                sum += self.expenses[i][1]
+            print(f"Total: {sum:.2f}")
+    
+    def save_expenses(self, filename):
+        with open(filename, 'w') as file:
+            json.dump([{"description": exp[0], "amount": exp[1], "category": exp[2]} for exp in self.expenses], file)
+        print(f"Expenses saved to {filename}")
+
+    def load_expenses(self, filename):
+        try:
+            with open(filename, 'r') as file:
+                expenses_data = json.load(file)
+                self.expenses = [(exp["description"], exp["amount"], exp["category"]) for exp in expenses_data]
+            print(f"Expenses loaded from {filename}")
+        except FileNotFoundError:
+            print(f"No file found with name {filename}")
+
 
     def ui(self):
         while True:
@@ -69,13 +74,15 @@ class Tracker:
             elif choice == "2":
                 track.view_all_expenses()
             elif choice == "3":
-                pass
+                track.view_by_category()
             elif choice == "4":
-                pass
+                track.view_total()
             elif choice == "5":
-                pass
+                filename = input("Enter File Name: ")
+                track.save_expenses(filename)
             elif choice == "6":
-                pass
+                filename = input("Enter File Name: ")
+                track.load_expenses(filename)
             elif choice == "7":
                 pass
                 break
@@ -85,9 +92,6 @@ class Tracker:
     def main(self):
         pass
         track.ui()
-
-    
-
 
 if __name__ == "__main__":
     track = Tracker()
