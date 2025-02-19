@@ -85,6 +85,7 @@ class Weather:
         weather.ui()
 
 if __name__ == "__main__":
-    api_key = "5508cba1c0d343dfa2373257251802"
+    api_key = "#" #removed the api key
+
     weather = Weather(api_key)
     weather.main()
