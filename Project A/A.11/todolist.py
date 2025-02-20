@@ -146,6 +146,23 @@ class ToDo:
 
         # View Task Frame
         self.view_frame = Frame(root, bd=5, bg='green')
+        
+        columns = ('Task', 'Date', 'Time')
+        self.view_tree = ttk.Treeview(self.view_frame, columns=columns, show='headings')
+
+        self.view_tree.heading('Task', text='Task')
+        self.view_tree.heading('Date', text='Date')
+        self.view_tree.heading('Time', text='Time')
+
+        self.view_tree.column('Task', width=300)
+        self.view_tree.column('Date', width=100)
+        self.view_tree.column('Time', width=100)
+
+        scrollbar = ttk.Scrollbar(self.view_tree, orient=VERTICAL, command=self.view_tree.yview)
+        self.view_tree.configure(yscrollcommand=scrollbar.set)
+
+        self.view_tree.pack(side=LEFT, fill=BOTH, expand=True, padx=20, pady=20)
+        scrollbar.pack(side=RIGHT, fill=Y)
 
         # Edit Task Frame
         self.edit_frame = Frame(root, bd=5, bg='orange')
@@ -178,8 +195,6 @@ class ToDo:
             task = (task_text, selected_date, selected_time)
             self.tasks.append(task)
 
-
-
     def add_task(self):
         self.view_frame.pack_forget()
         self.edit_frame.pack_forget()
@@ -193,6 +208,10 @@ class ToDo:
         self.delete_frame.pack_forget()
         self.save_frame.pack_forget()
         self.view_frame.pack(expand=True,pady=10,padx=10, fill=BOTH)
+
+        for task in self.tasks:
+            self.view_tree.insert('',END, values=task)
+            print(task)
 
     def edit_task(self):
         self.add_frame.pack_forget()
