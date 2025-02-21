@@ -147,22 +147,27 @@ class ToDo:
         # View Task Frame
         self.view_frame = Frame(root, bd=5, bg='green')
         
-        columns = ('Task', 'Date', 'Time')
+        columns = ('Status', 'Task', 'Date', 'Time')
         self.view_tree = ttk.Treeview(self.view_frame, columns=columns, show='headings')
 
+        self.view_tree.heading('Status', text='Status')
         self.view_tree.heading('Task', text='Task')
         self.view_tree.heading('Date', text='Date')
         self.view_tree.heading('Time', text='Time')
 
-        self.view_tree.column('Task', width=300)
-        self.view_tree.column('Date', width=100)
-        self.view_tree.column('Time', width=100)
+        self.view_tree.column('Status', width=10, anchor='center', stretch=True)
+        self.view_tree.column('Task', width=300, anchor='center')
+        self.view_tree.column('Date', width=100, anchor='center')
+        self.view_tree.column('Time', width=100, anchor='center')
 
         scrollbar = ttk.Scrollbar(self.view_tree, orient=VERTICAL, command=self.view_tree.yview)
         self.view_tree.configure(yscrollcommand=scrollbar.set)
 
         self.view_tree.pack(side=LEFT, fill=BOTH, expand=True, padx=20, pady=20)
         scrollbar.pack(side=RIGHT, fill=Y)
+
+        self.but = Button(root, text='go', command=self.testing, font=self.Header2)
+        self.but.pack(padx=5, pady=5)
 
         # Edit Task Frame
         self.edit_frame = Frame(root, bd=5, bg='orange')
@@ -175,6 +180,10 @@ class ToDo:
         
         # Load Task Frame
         self.load_frame = Frame(root, bd=5, bg='blue')
+
+    def testing(self):
+        is_checked = self.check_var.get()
+        print(is_checked)
 
     def task_add_submit(self):
         task_text = self.entry_task.get()
@@ -192,6 +201,7 @@ class ToDo:
             self.error_label.pack(padx=10,pady=0,side=TOP)
         else:
             selected_time = (f"{selected_hour}:{selected_min}")
+            status = False
             task = (task_text, selected_date, selected_time)
             self.tasks.append(task)
 
@@ -208,11 +218,13 @@ class ToDo:
         self.delete_frame.pack_forget()
         self.save_frame.pack_forget()
         self.view_frame.pack(expand=True,pady=10,padx=10, fill=BOTH)
-
+        self.check_var = BooleanVar(value=True)
+        self.radio = Checkbutton(self.view_tree, text='Test', variable=self.check_var)
         for task in self.tasks:
-            self.view_tree.insert('',END, values=task)
+            self.view_tree.insert('', END, values=(self.radio, task[0], task[1], task[2]))
             print(task)
-
+            self.radio.pack(padx=5, pady=10)
+    
     def edit_task(self):
         self.add_frame.pack_forget()
         self.view_frame.pack_forget()
