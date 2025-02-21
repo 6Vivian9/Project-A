@@ -181,6 +181,11 @@ class ToDo:
         # Load Task Frame
         self.load_frame = Frame(root, bd=5, bg='blue')
 
+        self.status_frame = Frame(self.view_frame, bg='red')
+        self.status_frame.pack(fill=X)
+
+
+
     def testing(self):
         is_checked = self.check_var.get()
         print(is_checked)
@@ -218,13 +223,28 @@ class ToDo:
         self.delete_frame.pack_forget()
         self.save_frame.pack_forget()
         self.view_frame.pack(expand=True,pady=10,padx=10, fill=BOTH)
-        self.check_var = BooleanVar(value=True)
-        self.radio = Checkbutton(self.view_tree, text='Test', variable=self.check_var)
+
+        for item in self.view_tree.get_children():
+            self.view_tree.delete(item)
+
         for task in self.tasks:
-            self.view_tree.insert('', END, values=(self.radio, task[0], task[1], task[2]))
-            print(task)
-            self.radio.pack(padx=5, pady=10)
-    
+            item = self.view_tree.insert('', END, values=('', task[0], task[1], task[2]))
+            
+        self.view_tree.bind('<Button-1>', self.toggle_checkbox)
+        
+    def toggle_checkbox(self, event):
+        region = self.view_tree.identify_region(event.x, event.y)
+        if region == "cell":
+            column = self.view_tree.identify_column(event.x)
+            if column == '#1':
+                item = self.view_tree.identify_row(event.y)
+                if item:
+                    values = self.view_tree.item(item)['values']
+                    new_status = '✓' if values[0] == '☐' else '☐'
+                    values = list(values)
+                    values[0] = new_status
+                    self.view_tree.item(item, values=values)
+
     def edit_task(self):
         self.add_frame.pack_forget()
         self.view_frame.pack_forget()
