@@ -29,7 +29,8 @@ import time as tm
 import json
 class ToDo:
     def __init__(self, root):
-        self.tasks = []
+        self.tasks = [('#01', '#02', '#03', '#04'),('#11', '#12', '#13', '#14'),('#21', '#22', '#23', '#24'),('#31', '#32', '#33', '#34')]
+        self.done = []
 
         current_time = tm.localtime()
         current_hour = current_time.tm_hour
@@ -145,8 +146,10 @@ class ToDo:
         self.task_submit1.pack(padx=10, pady=15, side=TOP)
 
         # View Task Frame
-        self.view_frame = Frame(root, bd=5, bg='green')
-        
+        self.view_frame = Frame(root, bd=5)
+        self.refresh = Button(self.view_frame, text='Refresh', font=('Arial', self.Header3), relief='groove', bd=3, command=self.refresh_table)
+        self.refresh.pack(padx=5, pady=5, side=BOTTOM)
+
         columns = ('Status', 'Task', 'Date', 'Time')
         self.view_tree = ttk.Treeview(self.view_frame, columns=columns, show='headings')
 
@@ -166,11 +169,17 @@ class ToDo:
         self.view_tree.pack(side=LEFT, fill=BOTH, expand=True, padx=20, pady=20)
         scrollbar.pack(side=RIGHT, fill=Y)
 
-        self.but = Button(root, text='go', command=self.testing, font=self.Header2)
-        self.but.pack(padx=5, pady=5)
+
 
         # Edit Task Frame
         self.edit_frame = Frame(root, bd=5, bg='orange')
+
+        self.var = tk.IntVar(value=1)
+        self.checkbut = Checkbutton(self.edit_frame, bd=5, variable=self.var)
+        self.checkbut.pack()
+
+        self.but = Button(self.edit_frame, bd=5, command=self.test, text='Click')
+        self.but.pack()
 
         # Delete Task Frame
         self.delete_frame = Frame(root, bd=5, bg='purple')
@@ -184,11 +193,20 @@ class ToDo:
         self.status_frame = Frame(self.view_frame, bg='red')
         self.status_frame.pack(fill=X)
 
+    def refresh_table(self):
+        for i in range (0, len(self.tasks)):
+            if self.tasks[i][0] == '✓':
+                self.done.append(self.tasks[i])
+                self.tasks.pop(i)
+                print(self.done)
+            # self.tasks.pop(i)
+            # whole = (temp,back)
+            # self.tasks.append(whole)
+            # print(self.tasks)
 
 
-    def testing(self):
-        is_checked = self.check_var.get()
-        print(is_checked)
+    def test(self):
+        self.var.set(1)
 
     def task_add_submit(self):
         task_text = self.entry_task.get()
@@ -206,8 +224,7 @@ class ToDo:
             self.error_label.pack(padx=10,pady=0,side=TOP)
         else:
             selected_time = (f"{selected_hour}:{selected_min}")
-            status = False
-            task = (task_text, selected_date, selected_time)
+            task = ("O" ,task_text, selected_date, selected_time)
             self.tasks.append(task)
 
     def add_task(self):
@@ -222,13 +239,13 @@ class ToDo:
         self.edit_frame.pack_forget()
         self.delete_frame.pack_forget()
         self.save_frame.pack_forget()
-        self.view_frame.pack(expand=True,pady=10,padx=10, fill=BOTH)
+        self.view_frame.pack(expand=True,pady=0,padx=10, fill=BOTH)
 
         for item in self.view_tree.get_children():
             self.view_tree.delete(item)
 
         for task in self.tasks:
-            item = self.view_tree.insert('', END, values=('', task[0], task[1], task[2]))
+            item = self.view_tree.insert('', END, values=('', task[1], task[2], task[3]))
             
         self.view_tree.bind('<Button-1>', self.toggle_checkbox)
         
@@ -240,10 +257,14 @@ class ToDo:
                 item = self.view_tree.identify_row(event.y)
                 if item:
                     values = self.view_tree.item(item)['values']
-                    new_status = '✓' if values[0] == '☐' else '☐'
+                    new_status = '✓' if values[0] == 'O' else 'O'
                     values = list(values)
                     values[0] = new_status
                     self.view_tree.item(item, values=values)
+
+
+
+                    
 
     def edit_task(self):
         self.add_frame.pack_forget()
