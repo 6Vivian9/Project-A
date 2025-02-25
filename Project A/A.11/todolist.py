@@ -29,7 +29,7 @@ import time as tm
 import json
 class ToDo:
     def __init__(self, root):
-        self.tasks = [('#01', '#02', '#03', '#04'),('#11', '#12', '#13', '#14'),('#21', '#22', '#23', '#24'),('#31', '#32', '#33', '#34')]
+        self.tasks = [('O', '#02', '#03', '#04'),('O', '#12', '#13', '#14'),('O', '#22', '#23', '#24'),('O', '#32', '#33', '#34')]
         self.done = []
 
         current_time = tm.localtime()
@@ -172,15 +172,34 @@ class ToDo:
 
 
         # Edit Task Frame
-        self.edit_frame = Frame(root, bd=5, bg='orange')
+        self.edit_frame = Frame(root, bd=5)
 
-        self.var = tk.IntVar(value=1)
-        self.checkbut = Checkbutton(self.edit_frame, bd=5, variable=self.var)
-        self.checkbut.pack()
+        self.button_frame_edit = Frame(self.edit_frame, bd=5)
+        self.button_frame_edit.pack(fill=X, anchor='center', side=BOTTOM)
 
-        self.but = Button(self.edit_frame, bd=5, command=self.test, text='Click')
-        self.but.pack()
+        self.saved_button = Button(self.button_frame_edit, text='Edit', font=('Arial', self.Header3), relief='groove', bd=3, command=self.edit_row)
+        self.saved_button.pack(padx=5, pady=5, side=LEFT, expand=True)
 
+        self.saved_button = Button(self.button_frame_edit, text='Save', font=('Arial', self.Header3), relief='groove', bd=3, command=self.save_edit)
+        self.saved_button.pack(padx=5, pady=5, side=LEFT, expand=True)
+
+        columns = ('Status', 'Task', 'Date', 'Time')
+        self.view_tree_edit = ttk.Treeview(self.edit_frame, columns=columns, show='headings')
+
+        self.view_tree_edit.heading('Task', text='Task')
+        self.view_tree_edit.heading('Date', text='Date')
+        self.view_tree_edit.heading('Time', text='Time')
+
+        self.view_tree_edit.column('Task', width=300, anchor='center')
+        self.view_tree_edit.column('Date', width=100, anchor='center')
+        self.view_tree_edit.column('Time', width=100, anchor='center')
+
+        scrollbar = ttk.Scrollbar(self.view_tree_edit, orient=VERTICAL, command=self.view_tree_edit.yview)
+        self.view_tree_edit.configure(yscrollcommand=scrollbar.set)
+
+        self.view_tree_edit.pack(side=LEFT, fill=BOTH, expand=True, padx=20, pady=20)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        
         # Delete Task Frame
         self.delete_frame = Frame(root, bd=5, bg='purple')
 
@@ -193,20 +212,34 @@ class ToDo:
         self.status_frame = Frame(self.view_frame, bg='red')
         self.status_frame.pack(fill=X)
 
+    def save_edit(self):
+        pass
+
+    def edit_row(self):
+        pass
+
     def refresh_table(self):
+        child = self.view_tree.get_children()
+        self.deletes = []
+
         for i in range (0, len(self.tasks)):
-            if self.tasks[i][0] == '✓':
-                self.done.append(self.tasks[i])
-                self.tasks.pop(i)
-                print(self.done)
-            # self.tasks.pop(i)
-            # whole = (temp,back)
-            # self.tasks.append(whole)
-            # print(self.tasks)
+            values = self.view_tree.item(child[i])['values']
+            if values[0] == '✓':
+                self.deletes.append(i)
+                self.done.append(self.view_tree.item(child[i])['values'])
 
 
-    def test(self):
-        self.var.set(1)
+        self.deletes.reverse()
+        for a in range (0,len(self.deletes)):
+            del self.tasks[self.deletes[a]]
+
+        self.deletes.clear
+
+        for item in self.view_tree.get_children():
+            self.view_tree.delete(item)
+
+        for task in self.tasks:
+            item = self.view_tree.insert('', END, values=('O', task[1], task[2], task[3]))
 
     def task_add_submit(self):
         task_text = self.entry_task.get()
@@ -245,7 +278,7 @@ class ToDo:
             self.view_tree.delete(item)
 
         for task in self.tasks:
-            item = self.view_tree.insert('', END, values=('', task[1], task[2], task[3]))
+            item = self.view_tree.insert('', END, values=('O', task[1], task[2], task[3]))
             
         self.view_tree.bind('<Button-1>', self.toggle_checkbox)
         
@@ -256,14 +289,12 @@ class ToDo:
             if column == '#1':
                 item = self.view_tree.identify_row(event.y)
                 if item:
+                    self.row_number = self.view_tree.index(item)
                     values = self.view_tree.item(item)['values']
                     new_status = '✓' if values[0] == 'O' else 'O'
                     values = list(values)
                     values[0] = new_status
                     self.view_tree.item(item, values=values)
-
-
-
                     
 
     def edit_task(self):
@@ -273,6 +304,12 @@ class ToDo:
         self.save_frame.pack_forget()
         self.edit_frame.pack(expand=True,pady=10,padx=10, fill=BOTH)
 
+        for item in self.view_tree_edit.get_children():
+            self.view_tree_edit.delete(item)
+
+        for task in self.tasks:
+            item = self.view_tree_edit.insert('', END, values=('O', task[1], task[2], task[3]))
+            
     def delete_task(self):
         self.add_frame.pack_forget()
         self.view_frame.pack_forget()
