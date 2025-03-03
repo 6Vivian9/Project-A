@@ -158,8 +158,8 @@ class ToDo:
         self.view_tree.heading('Date', text='Date')
         self.view_tree.heading('Time', text='Time')
 
-        self.view_tree.column('Status', width=10, anchor='center', stretch=True)
-        self.view_tree.column('Task', width=300, anchor='center')
+        self.view_tree.column('Status', width=10, anchor='center')
+        self.view_tree.column('Task', width=300, anchor='center', stretch=True)
         self.view_tree.column('Date', width=100, anchor='center')
         self.view_tree.column('Time', width=100, anchor='center')
 
@@ -183,14 +183,14 @@ class ToDo:
         self.saved_button = Button(self.button_frame_edit, text='Save', font=('Arial', self.Header3), relief='groove', bd=3, command=self.save_edit)
         self.saved_button.pack(padx=5, pady=5, side=LEFT, expand=True)
 
-        columns = ('Status', 'Task', 'Date', 'Time')
+        columns = ('Task', 'Date', 'Time')
         self.view_tree_edit = ttk.Treeview(self.edit_frame, columns=columns, show='headings')
 
         self.view_tree_edit.heading('Task', text='Task')
         self.view_tree_edit.heading('Date', text='Date')
         self.view_tree_edit.heading('Time', text='Time')
 
-        self.view_tree_edit.column('Task', width=300, anchor='center')
+        self.view_tree_edit.column('Task', width=300, anchor='center', stretch=True)
         self.view_tree_edit.column('Date', width=100, anchor='center')
         self.view_tree_edit.column('Time', width=100, anchor='center')
 
@@ -199,6 +199,10 @@ class ToDo:
 
         self.view_tree_edit.pack(side=LEFT, fill=BOTH, expand=True, padx=20, pady=20)
         scrollbar.pack(side=RIGHT, fill=Y)
+
+
+
+
         
         # Delete Task Frame
         self.delete_frame = Frame(root, bd=5, bg='purple')
@@ -216,7 +220,12 @@ class ToDo:
         pass
 
     def edit_row(self):
-        pass
+        selected_item = self.view_tree_edit.selection()
+        if selected_item:
+            item_values = self.view_tree_edit.item(selected_item, 'values')
+            print(f"{item_values}")
+
+
 
     def refresh_table(self):
         child = self.view_tree.get_children()
@@ -308,7 +317,7 @@ class ToDo:
             self.view_tree_edit.delete(item)
 
         for task in self.tasks:
-            item = self.view_tree_edit.insert('', END, values=('O', task[1], task[2], task[3]))
+            item = self.view_tree_edit.insert('', END, values=(task[1], task[2], task[3]))
             
     def delete_task(self):
         self.add_frame.pack_forget()
