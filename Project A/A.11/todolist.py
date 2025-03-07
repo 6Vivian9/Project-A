@@ -27,9 +27,10 @@ from tkcalendar import *
 from datetime import datetime,time
 import time as tm
 import json
+import string
 class ToDo:
     def __init__(self, root):
-        self.tasks = [('O', '#02', '#03', '#04'),('O', '#12', '#13', '#14'),('O', '#22', '#23', '#24'),('O', '#32', '#33', '#34')]
+        self.tasks = [('O', 'Hello World', '2025-03-07', '14:31'),('O', 'Hello Mundo', '2024-03-07', '14:31'),('O', 'Hello Earth', '2024-03-07', '14:31'),('O', 'Hello Mars', '2024-03-07', '14:31')]
         self.done = []
 
         current_time = tm.localtime()
@@ -199,10 +200,6 @@ class ToDo:
 
         self.view_tree_edit.pack(side=LEFT, fill=BOTH, expand=True, padx=20, pady=20)
         scrollbar.pack(side=RIGHT, fill=Y)
-
-
-
-
         
         # Delete Task Frame
         self.delete_frame = Frame(root, bd=5, bg='purple')
@@ -222,10 +219,34 @@ class ToDo:
     def edit_row(self):
         selected_item = self.view_tree_edit.selection()
         if selected_item:
-            item_values = self.view_tree_edit.item(selected_item, 'values')
-            print(f"{item_values}")
+            self.item_values = self.view_tree_edit.item(selected_item, 'values')
+            print(f"{self.item_values}")
 
+        self.view_frame.pack_forget()
+        self.edit_frame.pack_forget()
+        self.delete_frame.pack_forget()
+        self.save_frame.pack_forget()
+        self.add_frame.pack(expand=True,pady=10,padx=10, fill=BOTH)
 
+        self.entry_task.insert(0, self.item_values[0])
+        self.cal.set_date(self.item_values[1])
+        
+        time_value = self.item_values[2]
+        num1, num2 = time_value.split(":")
+        num1 = int(num1)
+        num2 = int(num2)
+
+        if num1 > 12:
+            num1 -= 12
+            self.AMPM_combo.set("PM")
+        self.hour_combo.set(num1)
+        self.minute_combo.set(num2)
+
+        self.selected_item_id = selected_item[0]
+        
+        digits_only = ''.join([char for char in self.selected_item_id if char in string.digits])
+        print(digits_only)
+        self.tasks.remove(digits_only)
 
     def refresh_table(self):
         child = self.view_tree.get_children()
@@ -269,12 +290,15 @@ class ToDo:
             task = ("O" ,task_text, selected_date, selected_time)
             self.tasks.append(task)
 
+        
+
     def add_task(self):
         self.view_frame.pack_forget()
         self.edit_frame.pack_forget()
         self.delete_frame.pack_forget()
         self.save_frame.pack_forget()
         self.add_frame.pack(expand=True,pady=10,padx=10, fill=BOTH)
+        self.entry_task.delete(0, END)
 
     def view_task(self):
         self.add_frame.pack_forget()
